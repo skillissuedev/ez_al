@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 use allen::Source;
-use crate::{sound_asset::SoundAsset, SoundError, take_context, return_context};
+use crate::{sound_asset::WavAsset, SoundError, take_context, return_context};
 
 pub struct SoundEmitter {
     pub name: String,
@@ -15,7 +15,7 @@ pub enum SoundEmitterType {
 }
 
 impl SoundEmitter {
-    pub fn new(name: &str, asset: &SoundAsset, emitter_type: SoundEmitterType) -> Result<SoundEmitter, SoundError> {
+    pub fn new(name: &str, asset: &WavAsset, emitter_type: SoundEmitterType) -> Result<SoundEmitter, SoundError> {
         let context = take_context();
         let source_result = context.new_source();
         let source: Source;

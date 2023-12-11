@@ -3,13 +3,13 @@ use hound::WavReader;
 
 use crate::{SoundError, take_context, return_context};
 
-pub struct SoundAsset {
+pub struct WavAsset {
     samples: Vec<i16>,
     pub buffer: Buffer,
 }
 
-impl SoundAsset {
-    pub fn from_wav(path: &str) -> Result<SoundAsset, SoundError> {
+impl WavAsset {
+    pub fn from_wav(path: &str) -> Result<Self, SoundError> {
         let context = take_context();
 
         let reader = WavReader::open(path);
@@ -61,7 +61,7 @@ impl SoundAsset {
 
         return_context(context);
 
-        return Ok(SoundAsset { samples, buffer });
+        return Ok(WavAsset { samples, buffer });
     }
 }
 
