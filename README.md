@@ -1,4 +1,4 @@
-# A simple OpenAL wrapper
+# A simple audio library
 
 This library makes it easy to play sounds.
 
