@@ -46,19 +46,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "allen"
-version = "0.2.1"
-source = "git+https://github.com/unknownbruhhaha/linear_model_allen#1e9335bccdc26ede62021c67f00627dda5a9dcf2"
-dependencies = [
- "bindgen",
- "cmake",
- "lazy_static",
- "num-derive",
- "num-traits",
- "thiserror",
-]
-
-[[package]]
 name = "android-activity"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -447,8 +434,8 @@ dependencies = [
 name = "ez_al"
 version = "0.1.0"
 dependencies = [
- "allen",
  "hound",
+ "linear_model_allen",
 ]
 
 [[package]]
@@ -725,6 +712,20 @@ dependencies = [
  "bitflags 2.4.1",
  "libc",
  "redox_syscall 0.4.1",
+]
+
+[[package]]
+name = "linear_model_allen"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0964e5478c33bbf01f192d0eb8e6ac4f016fde0804dd06d87cbfc43cc905f8b1"
+dependencies = [
+ "bindgen",
+ "cmake",
+ "lazy_static",
+ "num-derive",
+ "num-traits",
+ "thiserror",
 ]
 
 [[package]]

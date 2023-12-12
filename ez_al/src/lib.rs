@@ -1,4 +1,4 @@
-use allen::{AllenError, Context, Device, Orientation, Buffer, BufferData, Channels, Source};
+use linear_model_allen::{AllenError, Context, Device, Orientation, Buffer, BufferData, Channels, Source};
 use hound::WavReader;
 
 /// All errors that may occur when loading/playing sounds
