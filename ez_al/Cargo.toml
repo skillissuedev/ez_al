@@ -8,6 +8,7 @@ description = "A simple audio library"
 categories = ["game-development", "multimedia::audio", "multimedia"]
 keywords = ["gamedev", "sound", "audio", "openal"]
 repository = "https://github.com/unknownbruhhaha/ez_al/"
+licence = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
