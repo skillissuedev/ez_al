@@ -1,7 +1,7 @@
 use allen::{AllenError, Context, Device, Orientation};
 
 pub mod sound_asset;
-pub mod sound_emitter;
+pub mod sound_source;
 
 #[derive(Debug)]
 pub enum SoundError {

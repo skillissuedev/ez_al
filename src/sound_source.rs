@@ -2,20 +2,20 @@ use std::fmt::Debug;
 use allen::Source;
 use crate::{sound_asset::WavAsset, SoundError, take_context, return_context};
 
-pub struct SoundEmitter {
+pub struct SoundSource {
     pub name: String,
-    pub emitter_type: SoundEmitterType,
+    pub emitter_type: SoundSourceType,
     source: Source,
 }
 
 #[derive(Debug)]
-pub enum SoundEmitterType {
+pub enum SoundSourceType {
     Simple,
     Positional,
 }
 
-impl SoundEmitter {
-    pub fn new(name: &str, asset: &WavAsset, emitter_type: SoundEmitterType) -> Result<SoundEmitter, SoundError> {
+impl SoundSource {
+    pub fn new(name: &str, asset: &WavAsset, emitter_type: SoundSourceType) -> Result<SoundSource, SoundError> {
         let context = take_context();
         let source_result = context.new_source();
         let source: Source;
@@ -29,8 +29,8 @@ impl SoundEmitter {
 
         let _ = source.set_buffer(Some(&asset.buffer));
         match emitter_type {
-            SoundEmitterType::Simple => source.set_relative(true).unwrap(),
-            SoundEmitterType::Positional => {
+            SoundSourceType::Simple => source.set_relative(true).unwrap(),
+            SoundSourceType::Positional => {
                 let _ = source.set_reference_distance(0.0);
                 let _ = source.set_rolloff_factor(1.0);
                 let _ = source.set_min_gain(0.0);
@@ -39,7 +39,7 @@ impl SoundEmitter {
 
         return_context(context);
 
-        return Ok(SoundEmitter {
+        return Ok(SoundSource {
             name: name.to_string(),
             emitter_type,
             source,
@@ -60,10 +60,10 @@ impl SoundEmitter {
 
     pub fn set_max_distance(&mut self, distance: f32) -> Result<(), SoundError> {
         match self.emitter_type {
-            SoundEmitterType::Simple => {
+            SoundSourceType::Simple => {
                 return Err(SoundError::WrongEmitterType);
             }
-            SoundEmitterType::Positional => {
+            SoundSourceType::Positional => {
                 let _ = self.source.set_max_distance(distance);
                 return Ok(());
             }
@@ -72,10 +72,10 @@ impl SoundEmitter {
 
     pub fn get_max_distance(&mut self) -> Result<f32, SoundError> {
         match self.emitter_type {
-            SoundEmitterType::Simple => {
+            SoundSourceType::Simple => {
                 return Err(SoundError::WrongEmitterType);
             }
-            SoundEmitterType::Positional => return Ok(self.source.max_distance().unwrap()),
+            SoundSourceType::Positional => return Ok(self.source.max_distance().unwrap()),
         }
     }
 
