@@ -7,7 +7,7 @@ pub struct SoundSource {
     source: Source,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum SoundSourceType {
     Simple,
     Positional,
