@@ -3,7 +3,6 @@ use allen::Source;
 use crate::{sound_asset::WavAsset, SoundError, take_context, return_context};
 
 pub struct SoundSource {
-    pub name: String,
     pub emitter_type: SoundSourceType,
     source: Source,
 }
@@ -15,7 +14,7 @@ pub enum SoundSourceType {
 }
 
 impl SoundSource {
-    pub fn new(name: &str, asset: &WavAsset, emitter_type: SoundSourceType) -> Result<SoundSource, SoundError> {
+    pub fn new(asset: &WavAsset, emitter_type: SoundSourceType) -> Result<SoundSource, SoundError> {
         let context = take_context();
         let source_result = context.new_source();
         let source: Source;
@@ -40,7 +39,6 @@ impl SoundSource {
         return_context(context);
 
         return Ok(SoundSource {
-            name: name.to_string(),
             emitter_type,
             source,
         });
