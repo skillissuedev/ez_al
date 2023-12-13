@@ -6,7 +6,7 @@ authors = ["unknownbruh"]
 readme = "../README.md"
 description = "A simple audio library"
 categories = ["game-development", "multimedia::audio", "multimedia"]
-keywords = ["gamedev", "sound", "audio", "openal"]
+keywords = ["gamedev", "game", "sound", "audio", "openal"]
 repository = "https://github.com/unknownbruhhaha/ez_al/"
 license = "MIT"
 
