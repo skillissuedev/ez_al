@@ -1,5 +1,5 @@
 use std::env;
-use ez_al::{WavAsset, SoundSource, SoundSourceType};
+use ez_al::{EzAl, SoundSource, SoundSourceType, WavAsset};
 use three_d::*;
 
 pub fn main() {
@@ -43,14 +43,14 @@ pub fn main() {
 
 
     // Initializing ez_al
-    ez_al::init().expect("Failed to init ez_al!");
+    let al = EzAl::new().expect("Failed to start EzAl!");
     // Creating an asset
-    let asset = WavAsset::from_wav(&get_full_asset_path("sound.wav"))
+    let asset = WavAsset::from_wav(&al, &get_full_asset_path("sound.wav"))
         .expect("Failed to load .wav file! Make sure that it's placed in the same directory as executable and named 'sound.wav'");
     // Creating sources
-    let mut pos_source = SoundSource::new(&asset, SoundSourceType::Positional)
+    let mut pos_source = SoundSource::new(&al, &asset, SoundSourceType::Positional)
         .expect("Failed to create a positional sound source");
-    let mut simple_source = SoundSource::new(&asset, SoundSourceType::Simple)
+    let mut simple_source = SoundSource::new(&al, &asset, SoundSourceType::Simple)
         .expect("Failed to create a simple sound source");
 
     let _ = pos_source.update([0.0, 0.0, 0.0]);
@@ -91,7 +91,7 @@ pub fn main() {
         let cam_up = camera.view_direction();
 
         // Setting listener position
-        ez_al::set_listener_transform([cam_pos.x, cam_pos.y, cam_pos.z], cam_at.into(), [cam_up.x, cam_up.y, cam_up.z]);
+        ez_al::set_listener_transform(&al, [cam_pos.x, cam_pos.y, cam_pos.z], cam_at.into(), [cam_up.x, cam_up.y, cam_up.z]);
 
         frame_input
             .screen()
@@ -108,7 +108,7 @@ pub fn main() {
 
 
 pub fn get_full_asset_path(path: &str) -> String {
-    let mut exec_path: String = "".to_string();
+    let exec_path;
 
     match env::current_exe() {
         Ok(exe_path) => {

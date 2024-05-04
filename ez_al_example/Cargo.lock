@@ -432,7 +432,7 @@ dependencies = [
 
 [[package]]
 name = "ez_al"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "hound",
  "linear_model_allen",
