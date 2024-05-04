@@ -3,21 +3,21 @@
 This library makes it easy to play sounds.
 
     // Initializing ez_al
-    ez_al::init().expect("Failed to init ez_al!");
+    let al = EzAl::new().expect("Failed to open device or create OpenAL context!");
     
     // Creating an asset
-    let asset = WavAsset::from_wav("sound.wav")
+    let asset = WavAsset::from_wav(&al, "sound.wav")
       .expect("failed to load a wav file");
         
     // Creating sources
-    let mut pos_source = SoundSource::new(&asset, SoundSourceType::Positional)
+    let mut pos_source = SoundSource::new(&al, &asset, SoundSourceType::Positional)
       .expect("Failed to create a positional sound source");
         
-    let mut simple_source = SoundSource::new(&asset, SoundSourceType::Simple)
+    let mut simple_source = SoundSource::new(&al, &asset, SoundSourceType::Simple)
       .expect("Failed to create a simple sound source");
 
     // Setting listener position and orientation
-    ez_al::set_listener_transform(cam_pos, cam_at, cam_up);
+    ez_al::set_listener_transform(&al, cam_pos, cam_at, cam_up);
 
     // Playing sounds
     pos_source.play_sound();
