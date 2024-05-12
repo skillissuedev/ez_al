@@ -55,6 +55,7 @@ pub fn main() {
 
     let _ = pos_source.update([0.0, 0.0, 0.0]);
     let _ = pos_source.set_max_distance(30.0);
+    let mut volume: f32 = 1.0;
 
 
     window.render_loop(move |mut frame_input| {
@@ -64,22 +65,28 @@ pub fn main() {
                     ui.label("To move camera use LMB and mouse wheel");
                     ui.label("To play sound using positional source press E");
                     ui.label("To play sound using simple source press F");
+                    ui.label(format!("Press UP or DOWN to change the volume. Current value is {}", volume));
                 });
             }
         );
+        simple_source.set_volume(volume);
+        pos_source.set_volume(volume);
 
         camera.set_viewport(frame_input.viewport);
         control.handle_events(&mut camera, &mut frame_input.events);
         for ev in &frame_input.events {
             match ev {
                 Event::KeyPress { kind, modifiers: _, handled: _ } => {
-                    if let Key::E = kind {
-                        // Playing sound using positional source if key E is pressed
-                        pos_source.play_sound();
-                    }
-                    if let Key::F = kind {
-                        // Playing sound using simple source if key F is pressed
-                        simple_source.play_sound();
+                    match kind {
+                        // positional source plays its sound if E is pressed 
+                        Key::E => pos_source.play_sound(),
+                        // simple source plays its sound if F is pressed 
+                        Key::F => simple_source.play_sound(),
+                        // making sound louder if UP is pressed 
+                        Key::ArrowUp => volume += 0.25,
+                        // making sound louder if DOWN is pressed 
+                        Key::ArrowDown => volume -= 0.25,
+                        _ => ()
                     }
                 },
                 _ => ()
@@ -88,7 +95,7 @@ pub fn main() {
 
         let cam_pos = camera.position();
         let cam_at = camera.view_direction();
-        let cam_up = camera.view_direction();
+        let cam_up = camera.up();
 
         // Setting listener position
         ez_al::set_listener_transform(&al, [cam_pos.x, cam_pos.y, cam_pos.z], cam_at.into(), [cam_up.x, cam_up.y, cam_up.z]);

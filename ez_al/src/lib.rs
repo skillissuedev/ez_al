@@ -184,7 +184,7 @@ pub enum SoundSourceType {
 }
 
 impl SoundSource {
-    /// This funcion creates new SoundSource
+    /// Creates new SoundSource
     pub fn new(al: &EzAl, asset: &WavAsset, source_type: SoundSourceType) -> Result<SoundSource, SoundError> {
         let context = &al.context;
         let source_result = context.new_source();
@@ -230,16 +230,16 @@ impl SoundSource {
         self.source.is_looping().unwrap()
     }
 
-    /// Makes source play it's sound
+    /// Makes source play its sound
     pub fn play_sound(&mut self) {
         let _ = self.source.play();
     }
 
     /// Sets max distance from listener to source.
     /// 
-    /// If distance is more than max, user won't hear sound of source.
+    /// If distance is more than max, listener won't hear sound of the source.
     /// 
-    /// Type of source should be positional to use this function.
+    /// Type of the source should be positional to use this function.
     pub fn set_max_distance(&mut self, distance: f32) -> Result<(), SoundError> {
         match self.source_type {
             SoundSourceType::Simple => {
@@ -256,7 +256,7 @@ impl SoundSource {
     /// 
     /// If distance is more than max, user won't hear sound of source.
     /// 
-    /// Type of source should be positional to use this function.
+    /// Type of the source should be positional to use this function.
     pub fn get_max_distance(&mut self) -> Result<f32, SoundError> {
         match self.source_type {
             SoundSourceType::Simple => {
@@ -268,12 +268,24 @@ impl SoundSource {
 
     /// Sets position of the source.
     /// 
-    /// Type of source should be positional to use this function.
+    /// Type of the source should be positional to use this function.
     pub fn update(&mut self, sound_position: [f32; 3]) -> Result<(), SoundError> {
         let position_result_result = self.source.set_position(sound_position.into());
         match position_result_result {
             Ok(_) => Ok(()),
             Err(error) => Err(SoundError::SettingPositionError(error)),
         }
+    }
+
+
+    /// Changes the gain value of the source
+    pub fn set_volume(&mut self, volume: f32) {
+        let _ = self.source.set_gain(volume);
+        let _ = self.source.set_max_gain(volume);
+    }
+
+    /// Returns the gain value of the source
+    pub fn volume(&self) -> Result<f32, AllenError> {
+        self.source.gain()
     }
 }

@@ -432,16 +432,15 @@ dependencies = [
 
 [[package]]
 name = "ez_al"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
- "hound",
  "linear_model_allen",
  "wavers",
 ]
 
 [[package]]
 name = "ez_al_example"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "ez_al",
  "three-d",
@@ -601,12 +600,6 @@ checksum = "5444c27eef6923071f7ebcc33e3444508466a76f7a2b93da00ed6e19f30c1ddb"
 dependencies = [
  "windows-sys 0.48.0",
 ]
-
-[[package]]
-name = "hound"
-version = "3.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62adaabb884c94955b19907d60019f4e145d091c75345379e70d1ee696f7854f"
 
 [[package]]
 name = "indexmap"
