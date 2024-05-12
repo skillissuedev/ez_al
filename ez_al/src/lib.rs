@@ -1,10 +1,11 @@
 use linear_model_allen::{AllenError, Context, Device, Orientation, Buffer, BufferData, Channels, Source};
-use hound::WavReader;
+use wavers::{Wav, WaversError};
 
 pub struct EzAl {
     _device: Device,
     context: Context
 }
+
 impl EzAl {
     pub fn new() -> Result<Self, SoundError> {
         let device = match Device::open(None) {
@@ -41,12 +42,8 @@ pub enum SoundError {
     CurrentDeviceGettingError,
     /// Failed to create OpenAL context
     ContextCreationError(AllenError),
-    /// All Wav files should contain 16-bit mono audio
-    Not16BitWavFileError,
-    /// All Wav files should contain 16-bit mono audio
-    NotMonoWavFileError,
-    /// Failed to load Wav file(probably failed to access file)
-    SoundAssetLoadingError(hound::Error),
+    /// Failed to load .wav file(probably failed to access the file)
+    SoundAssetLoadingError(WaversError),
     /// Failed to create OpenAL buffer
     BufferCreationFailedError(AllenError),
     /// Failed to create an audio source
@@ -56,7 +53,9 @@ pub enum SoundError {
     /// Example: trying to access position when source's type is Simple 
     WrongSoundSourceType,
     /// Failed to set source position 
-    SettingPositionError(AllenError)
+    SettingPositionError(AllenError),
+    // Only mono and stereo sounds are supported
+    TooMuchChannels,
 }
 
 /// Sets position of listener.
@@ -80,12 +79,9 @@ pub fn set_listener_transform(al: &EzAl, position: [f32; 3], at: [f32; 3], up: [
 
 
 /// Wav file sound asset.
-///
-/// # Important note:
-///
-/// All .wav files should conatin only mono 16 bit sounds.
 pub struct WavAsset {
     pub(crate) buffer: Buffer,
+    pub(crate) mono_buffer: Option<Buffer>
 }
 
 impl WavAsset {
@@ -93,34 +89,61 @@ impl WavAsset {
     pub fn from_wav(al: &EzAl, path: &str) -> Result<Self, SoundError> {
         let context = &al.context;
 
-        let reader = WavReader::open(path);
-        match reader {
-            Ok(mut reader) => {
-                if reader.spec().channels > 1 {
-                    return Err(SoundError::NotMonoWavFileError);
-                }
+        let wav = Wav::from_path(path);
 
-                if reader.spec().bits_per_sample != 16 {
-                    return Err(SoundError::Not16BitWavFileError);
-                }
+        match wav {
+            Ok(mut wav) => {
+                let samples = match wav.read() {
+                    Ok(samples) => samples,
+                    Err(err) => return Err(SoundError::SoundAssetLoadingError(err)),
+                };
 
-                let samples = reader
-                    .samples::<i16>()
-                    .map(|s| s.unwrap())
-                    .collect::<Vec<_>>();
 
                 let buffer = context.new_buffer();
                 match buffer {
                     Ok(buffer) => {
+                        let sample_rate = wav.sample_rate();
+                        let channels;
+
+                        let mut mono_buffer = None;
+                        if wav.n_channels() == 1 {
+                            channels = Channels::Mono;
+                        } else if wav.n_channels() == 2 {
+                            channels = Channels::Stereo;
+
+                            let buffer = context.new_buffer();
+                            let channels = wav.channels();
+                            match buffer {
+                                Ok(buffer) => {
+                                    for channel in channels {
+                                        if let Err(err) = buffer.data(
+                                            BufferData::I16(&channel), 
+                                            Channels::Mono, 
+                                            sample_rate
+                                        ) {
+                                            return Err(SoundError::BufferCreationFailedError(err));
+                                        }
+
+                                        break;
+                                    }
+                                    mono_buffer = Some(buffer);
+                                },
+                                Err(err) => return Err(SoundError::BufferCreationFailedError(err)),
+                            }
+                        } else {
+                            return Err(SoundError::TooMuchChannels);
+                        }
+
+
                         if let Err(err) = buffer.data(
                             BufferData::I16(&samples),
-                            Channels::Mono,
-                            reader.spec().sample_rate as i32,
+                            channels,
+                            sample_rate
                         ) {
                             return Err(SoundError::BufferCreationFailedError(err));
                         };
 
-                        Ok(WavAsset { buffer })
+                        Ok(WavAsset { buffer, mono_buffer })
                     },
                     Err(err) => {
                         Err(SoundError::BufferCreationFailedError(err))
@@ -173,13 +196,21 @@ impl SoundSource {
             }
         }
 
-        let _ = source.set_buffer(Some(&asset.buffer));
+
         match source_type {
-            SoundSourceType::Simple => source.set_relative(true).unwrap(),
+            SoundSourceType::Simple => {
+                source.set_relative(true).unwrap();
+                let _ = source.set_buffer(Some(&asset.buffer));
+            },
             SoundSourceType::Positional => {
                 let _ = source.set_reference_distance(0.0);
                 let _ = source.set_rolloff_factor(1.0);
                 let _ = source.set_min_gain(0.0);
+                // If sound is stereo use only the first channel to make positional things work
+                let _ = match &asset.mono_buffer {
+                    Some(mono_buffer) => source.set_buffer(Some(&mono_buffer)),
+                    None => source.set_buffer(Some(&asset.buffer)),
+                };
             }
         }
 
@@ -241,7 +272,7 @@ impl SoundSource {
     pub fn update(&mut self, sound_position: [f32; 3]) -> Result<(), SoundError> {
         let position_result_result = self.source.set_position(sound_position.into());
         match position_result_result {
-            Ok(()) => Ok(()),
+            Ok(_) => Ok(()),
             Err(error) => Err(SoundError::SettingPositionError(error)),
         }
     }

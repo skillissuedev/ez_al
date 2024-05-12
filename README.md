@@ -1,9 +1,9 @@
 # A simple audio library
 
-This library makes it easy to play sounds.
+This library makes it easy to play .wav sounds.
 
     // Initializing ez_al
-    let al = EzAl::new().expect("Failed to open device or create OpenAL context!");
+    let al = EzAl::new().expect("Failed to open current device or create OpenAL context!");
     
     // Creating an asset
     let asset = WavAsset::from_wav(&al, "sound.wav")
@@ -22,10 +22,6 @@ This library makes it easy to play sounds.
     // Playing sounds
     pos_source.play_sound();
     simple_source.play_sound();
-
-## Important note
-
-You should only use 16-bit mono .wav files.
 
 ## Prerequirements
 

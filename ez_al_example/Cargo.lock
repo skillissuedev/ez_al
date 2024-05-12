@@ -432,15 +432,16 @@ dependencies = [
 
 [[package]]
 name = "ez_al"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "hound",
  "linear_model_allen",
+ "wavers",
 ]
 
 [[package]]
 name = "ez_al_example"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "ez_al",
  "three-d",
@@ -1009,6 +1010,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "paste"
+version = "1.0.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
+
+[[package]]
 name = "peeking_take_while"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1459,6 +1466,18 @@ name = "wasm-bindgen-shared"
 version = "0.2.89"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ab9b36309365056cd639da3134bf87fa8f3d86008abf99e612384a6eecd459f"
+
+[[package]]
+name = "wavers"
+version = "1.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfe2cd9aa3c18465a7134204e7ccf83b1db0e569fd0a9a29d88cdf012c738dab"
+dependencies = [
+ "bytemuck",
+ "num-traits",
+ "paste",
+ "thiserror",
+]
 
 [[package]]
 name = "wayland-client"

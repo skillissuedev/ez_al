@@ -45,7 +45,7 @@ pub fn main() {
     // Initializing ez_al
     let al = EzAl::new().expect("Failed to start EzAl!");
     // Creating an asset
-    let asset = WavAsset::from_wav(&al, &get_full_asset_path("sound.wav"))
+    let asset = WavAsset::from_wav(&al, &get_full_asset_path("sound_stereo_32bit.wav"))
         .expect("Failed to load .wav file! Make sure that it's placed in the same directory as executable and named 'sound.wav'");
     // Creating sources
     let mut pos_source = SoundSource::new(&al, &asset, SoundSourceType::Positional)
