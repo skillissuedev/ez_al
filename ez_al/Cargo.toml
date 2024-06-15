@@ -1,6 +1,6 @@
 [package]
 name = "ez_al"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2021"
 authors = ["skill_issue_dev"]
 readme = "../README.md"
@@ -13,5 +13,5 @@ license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-linear_model_allen = "0.2.1"
+linear_model_allen = "0.3.0"
 wavers = "1.4.2"

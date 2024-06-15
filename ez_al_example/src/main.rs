@@ -41,7 +41,6 @@ pub fn main() {
     );
     let light0 = DirectionalLight::new(&context, 1.0, Srgba::WHITE, &vec3(0.0, -0.5, -0.5));
 
-
     // Initializing ez_al
     let al = EzAl::new().expect("Failed to start EzAl!");
     // Creating an asset
