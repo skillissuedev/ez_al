@@ -120,7 +120,10 @@ pub fn get_full_asset_path(path: &str) -> String {
         Ok(exe_path) => {
             let executable_path = exe_path.to_str();
             match executable_path {
-                Some(executable_path_string) => exec_path = executable_path_string.to_owned(), //println!("Path of this executable is: {}", executable_path_string.to_owned() + "/" + path),
+                Some(executable_path_string) => {
+                    exec_path = executable_path_string.to_owned();
+                    println!("Path of this executable is: {}", executable_path_string.to_owned());
+                },
                 None => panic!("Getting current exe path error!"),
             }
         }

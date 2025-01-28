@@ -1,8 +1,8 @@
 [package]
 name = "ez_al"
-version = "0.3.1"
+version = "0.4.0"
 edition = "2021"
-authors = ["skill_issue_dev"]
+authors = ["sid <me@skillissuedev.net>"]
 readme = "../README.md"
 description = "A simple audio library"
 categories = ["game-development", "multimedia::audio", "multimedia"]
@@ -13,5 +13,5 @@ license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-linear_model_allen = "0.3.0"
 wavers = "1.4.2"
+linear_model_allen = "0.4.0"

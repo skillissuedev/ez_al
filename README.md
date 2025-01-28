@@ -25,6 +25,12 @@ This library makes it easy to play .wav sounds.
 
 ## Prerequirements
 
-Installed cmake and clang 
+### Linux
 
-Installation example(Arch Linux): `sudo pacman -S clang cmake`
+Installed openal
+
+Installation example (Arch Linux): `sudo pacman -S openal`
+
+### Windows
+
+Make sure you've installed OpenAL 1.1 Core SDK in the default directory (C:\Program Files (x86)\OpenAL 1.1 SDK).
