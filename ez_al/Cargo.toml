@@ -1,6 +1,6 @@
 [package]
 name = "ez_al"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 authors = ["sid <me@skillissuedev.net>"]
 readme = "../README.md"
@@ -15,3 +15,4 @@ license = "MIT"
 [dependencies]
 wavers = "1.4.2"
 linear_model_allen = "0.4.0"
+minimp3 = "0.6.1"

@@ -1,3 +1,5 @@
+use std::fs::File;
+
 use linear_model_allen::{AllenError, Context, Device, Orientation, Buffer, BufferData, Channels, Source};
 use wavers::{Wav, WaversError};
 
@@ -56,6 +58,7 @@ pub enum SoundError {
     SettingPositionError(AllenError),
     // Only mono and stereo sounds are supported
     TooMuchChannels,
+    FsError(std::io::Error),
 }
 
 /// Sets position of listener.
@@ -79,12 +82,89 @@ pub fn set_listener_transform(al: &EzAl, position: [f32; 3], at: [f32; 3], up: [
 
 
 /// Wav file sound asset.
-pub struct WavAsset {
+pub struct SoundAsset {
     pub(crate) buffer: Buffer,
     pub(crate) mono_buffer: Option<Buffer>
 }
 
-impl WavAsset {
+impl SoundAsset {
+    /// Loads an Mp3 file and creates an asset.
+    pub fn from_mp3(al: &EzAl, path: &str) -> Result<Self, SoundError> {
+        let file = File::open(path);
+        match file {
+            Ok(file) => {
+                let mut decoder = minimp3::Decoder::new(file);
+
+                let mut samples = Vec::new();
+                let mut sample_rate = 44100;
+                let mut channels = Channels::Mono;
+                while let Ok(frame) = decoder.next_frame() {
+                    if frame.channels > 2 {
+                        return Err(SoundError::TooMuchChannels)
+                    } else if frame.channels > 1 {
+                        channels = Channels::Stereo;
+                    }
+
+                    samples.extend_from_slice(&frame.data);
+                    sample_rate = frame.sample_rate;
+                };
+
+                let context = &al.context;
+                let buffer = context.new_buffer();
+
+                let mut asset_mono_buffer = None;
+
+                match buffer {
+                    Ok(buffer) => {
+                        match channels {
+                            Channels::Mono => {
+                                if let Err(err) = buffer.data(
+                                    BufferData::I16(&samples),
+                                    channels,
+                                    sample_rate
+                                ) {
+                                    return Err(SoundError::BufferCreationFailedError(err));
+                                };
+                            },
+                            Channels::Stereo => {
+                                if let Err(err) = buffer.data(
+                                    BufferData::I16(&samples),
+                                    channels,
+                                    sample_rate
+                                ) {
+                                    return Err(SoundError::BufferCreationFailedError(err));
+                                };
+
+                                match context.new_buffer() {
+                                    Ok(mono_buffer) => {
+                                        let mono_samples: Vec<i16> = samples.into_iter().step_by(2).collect();
+
+                                        if let Err(err) = mono_buffer.data(
+                                            BufferData::I16(&mono_samples),
+                                            Channels::Mono,
+                                            sample_rate
+                                        ) {
+                                            return Err(SoundError::BufferCreationFailedError(err));
+                                        };
+                                        asset_mono_buffer = Some(mono_buffer);
+                                    },
+                                    Err(err) => return Err(SoundError::BufferCreationFailedError(err)),
+                                }
+                            },
+                        }
+
+                        Ok(SoundAsset {
+                            buffer,
+                            mono_buffer: asset_mono_buffer,
+                        })
+                    },
+                    Err(err) => return Err(SoundError::BufferCreationFailedError(err)),
+                }
+            },
+            Err(err) => return Err(SoundError::FsError(err)),
+        }
+    }
+
     /// Loads Wav file and creates an asset.
     pub fn from_wav(al: &EzAl, path: &str) -> Result<Self, SoundError> {
         let context = &al.context;
@@ -143,7 +223,7 @@ impl WavAsset {
                             return Err(SoundError::BufferCreationFailedError(err));
                         };
 
-                        Ok(WavAsset { buffer, mono_buffer })
+                        Ok(SoundAsset { buffer, mono_buffer })
                     },
                     Err(err) => {
                         Err(SoundError::BufferCreationFailedError(err))
@@ -185,7 +265,7 @@ pub enum SoundSourceType {
 
 impl SoundSource {
     /// Creates new SoundSource
-    pub fn new(al: &EzAl, asset: &WavAsset, source_type: SoundSourceType) -> Result<SoundSource, SoundError> {
+    pub fn new(al: &EzAl, asset: &SoundAsset, source_type: SoundSourceType) -> Result<SoundSource, SoundError> {
         let context = &al.context;
         let source_result = context.new_source();
         let source: Source;

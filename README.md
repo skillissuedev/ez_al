@@ -1,6 +1,6 @@
 # A simple audio library
 
-This library makes it easy to play .wav sounds.
+This library makes it easy to play .wav or .mp3 sounds.
 
     // Initializing ez_al
     let al = EzAl::new().expect("Failed to open current device or create OpenAL context!");
@@ -8,12 +8,14 @@ This library makes it easy to play .wav sounds.
     // Creating an asset
     let asset = WavAsset::from_wav(&al, "sound.wav")
       .expect("failed to load a wav file");
+    let mp3_asset = WavAsset::from_mp3(&al, "sound.mp3")
+      .expect("failed to load a mp3 file");
         
     // Creating sources
     let mut pos_source = SoundSource::new(&al, &asset, SoundSourceType::Positional)
       .expect("Failed to create a positional sound source");
         
-    let mut simple_source = SoundSource::new(&al, &asset, SoundSourceType::Simple)
+    let mut simple_source = SoundSource::new(&al, &mp3_asset, SoundSourceType::Simple)
       .expect("Failed to create a simple sound source");
 
     // Setting listener position and orientation

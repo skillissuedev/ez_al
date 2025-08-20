@@ -1,5 +1,5 @@
 use std::env;
-use ez_al::{EzAl, SoundSource, SoundSourceType, WavAsset};
+use ez_al::{EzAl, SoundAsset, SoundSource, SoundSourceType};
 use three_d::*;
 
 pub fn main() {
@@ -44,8 +44,8 @@ pub fn main() {
     // Initializing ez_al
     let al = EzAl::new().expect("Failed to start EzAl!");
     // Creating an asset
-    let asset = WavAsset::from_wav(&al, &get_full_asset_path("sound_stereo_32bit.wav"))
-        .expect("Failed to load .wav file! Make sure that it's placed in the same directory as executable and named 'sound.wav'");
+    let asset = SoundAsset::from_mp3(&al, &get_full_asset_path("sound.mp3"))
+        .expect("Failed to load .mp3 file! Make sure that it's placed in the same directory as executable and named 'sound.mp3'");
     // Creating sources
     let mut pos_source = SoundSource::new(&al, &asset, SoundSourceType::Positional)
         .expect("Failed to create a positional sound source");
